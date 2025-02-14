@@ -19,3 +19,10 @@ nM -D /usr/lib/libm. so : grep erf
 echo " "
 echo " Ex4 - objdump"
 objdump -p /usr/lib/libm.so
+echo " Ex5 - bash_script"
+cd /usr/lib
+for LIBS in *; do
+  if nM -D $LIBS 2>/dev/null : grep -E "sin:cosiexp" >/dev/null; then
+    echo $LIBS
+  fi;
+done
