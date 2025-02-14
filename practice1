@@ -1,0 +1,21 @@
+#!/bin/sh
+
+echo " "
+echo " Practice1"
+echo " "
+echo " Ex1 - use ldd command"
+echo "ldd my_file"
+ldd Mess_around_and_find_out
+echo "ldd gcc"
+ldd /usr/local/bin/gcc
+echo "ldd libm. so"
+ldd /usr/lib/libm.so
+echo " "
+echo " Ex2 - find libs with math funstions"
+find /usr/lib -name "*math*"
+echo " "
+echo " Ex3 - check lib's symbols using nm or objdump"
+nM -D /usr/lib/libm. so : grep erf
+echo " "
+echo " Ex4 - objdump"
+objdump -p /usr/lib/libm.so
