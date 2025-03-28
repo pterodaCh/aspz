@@ -1,8 +1,8 @@
-#include <stdio. h>
-#include <stdlib. h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <sys/mman.h>
 #include <time.h>
-#include <unistd. h>
+#include <unistd.h>
 
 #define ITERATIONS 1000000
 #define BLOCK_SIZE 1024
@@ -14,7 +14,7 @@ void test_malloc()
   start = clock();
   for (int i = 0; i < ITERATIONS; i++)
   {
-    void *ptr = Malloc (BLOCK_SIZE);
+    void *ptr = malloc (BLOCK_SIZE);
     free(ptr);
   }  
 
@@ -36,13 +36,13 @@ void test_mmap( )
     munmap (ptr, BLOCK_SIZE) ;
   }
   end = clock();
-  cpu_time_used = ((double)(end - start)) / CLOCK_PER_SEC;
-  printf("mmap()/munmap(): %f seconds\n" cpu_time_used);
+  cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+  printf("mmap()/munmap(): %f seconds\n", cpu_time_used);
 }
 
 void compare_memory_usage()
 {
-  long page_size = sysconf(_SCPAFESIZE);
+  long page_size = sysconf(_SC_PAGE_SIZE);
   printf("System page size: %ld bytes\n", page_size);
 }
 
