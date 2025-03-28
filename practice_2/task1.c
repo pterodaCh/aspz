@@ -7,11 +7,8 @@ int main()
   time_t max_time_t;
   printf ("Word size: %zu\n", sizeof (void*) *8);
   
-  #if UINTPTR_MAX == 0xFFFFFFFF
-  max_time_t = (time_t)UINT32_MAX;
-  #else
-  max_time_t = (time_t)UINT64_MAX;
-  #endif
+  time_t max_time_t = (time_t)((1ULL << (sizeof(time_t) * 8 - 1)) - 1);
+
   
   struct tm *tm_info;
   tm_info = localtime(&max_time_t);
