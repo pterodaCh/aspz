@@ -1,5 +1,5 @@
 # АСПЗ 
-## 1. Визначення моменту, коли time_t закінчиться
+## 1. Ліміт time_t
 Ця задача порушує проблему 2038 року. Ця проблема стосується програм і систем, в яких використовується представлення часу за стандартом POSIX (час Unix). Цей стандарт використовує кількість секунд, які пройшли від початку «епохи», тобто з півночі 1 січня 1970 року. Таке представлення часу — стандарт для Unix-подібних операційних систем. Для зберігання секунд використовується тип даних time_t, визначений як signed int, тобто у форматі 32-бітного цілого числа зі знаком. Найпізніша дата, яка може бути представлена таким форматом в стандарті POSIX — 19 січня 2038. Введення 64-бітного формату вносить нову дату - 4 грудня 292 277 026 596 року.
 
 Для коректного відображення змін, оскільки порівнюються два формати, використовуєтсья прапорець `-m32`
@@ -15,6 +15,66 @@ Word size: 32
 Max value time_t: 2147483647
 Date and time, when time_t ends: Tue Jan 19 05:14:07 2038
 root@:/home/ptero/ASPZ/practice2 #
+```
+## 2. Аналіз сегментів файлу
+### 1. Використання команд `size` та `ls -l`
+- `size`: використовується для відображення розмірів різних секцій (текст, дані, BSS) виконуваного файлу або об'єктного файлу
+- `ls -l`: відображає детальну інформацію про файли у каталозі, включаючи права доступу, власника, групу, розмір, дату модифікації 
+```
+root@:/home/ptero/ASPZ/practice2 # gcc task2.c -o task2.out
+root@:/home/ptero/ASPZ/practice2 # ls -1 task2.out
+Frwxr-xr-x 1 root ptero 8200 Mar 28 23:36 task2. out
+root@:/home/ptero/ASPZ/practice2 # size task2.out
+text data bbs  dec hex file name
+1077 552 16 1645 0x66d task2_1
+```
+
+### 2. Додавання глобального масиву без ініціалізації
+Масив потрапляє в сегмент BSS
+```
+root@:/home/ptero/ASPZ/practice2 # size task2_2
+text data bbs  dec hex file name
+1077 552 4032 5661 0x161d task2_2
+```
+### 3. Додавання глобального масиву з ініціалізацією
+Тепер масив переміститься із BSS у DATA сегмент
+```
+root@:/home/ptero/ASPZ/practice2 # size task2_3
+text data bbs  dec hex file name
+1077 4568 16 5661 0x161d task2_3
+```
+### 4. Додавання локальних масивів
+Результат команди `size` на програмі із локальним неініціалізованим масивом
+```
+root@:/home/ptero/ASPZ/practice2 # size task2_4
+text data bbs  dec hex file name
+1085 552 16 1653 0x675 task2_4
+```
+Та ініціалізованим
+```
+root@:/home/ptero/ASPZ/practice2 # size task2_4
+text data bbs  dec hex file name
+1117 552 16 1683 0x695 task2_4
+```
+Простий локальний масив зберігається у стеку, а ініціалізований потрапляє у DATA сегмент.
+
+### 5. Налагодження та оптимізація
+Для налагодження використовувалися прапорці `-g` та `-gdwarf-5`
+```
+root@:/home/ptero/ASPZ/practice2 # gcc -g task2.c -o task2_5debug
+root@:/home/ptero/ASPZ/practice2 # ls -1 task2_5debug
+Frwxr-xr-x 1 root ptero 8896 Mar 27 23:16 task2_5debug
+root@:/home/ptero/ASPZ/practice2 # size task2_5debug
+text data bbs  dec hex file name
+1085 552 16 1653 0x675 task2_5debug
+root@:/home/ptero/ASPZ/practice2 # gcc -gwarf-5 task2.c -o task2_5debug1
+gcc: error: unrecognized debug output level 'warf-5'
+root@:/home/ptero/ASPZ/practice2 # gcc -gdwarf-5 task2.c -o task2_5debug1
+root@:/home/ptero/ASPZ/practice2 # ls -1 task2_5debug1
+-rwxr-xr-x 1 root ptero 8904 Mar 27 23:17 task2_5debug1
+root@:/home/ptero/ASPZ/practice2 # size task2_5debug1
+text data bbs  dec hex file name
+1085 552 16 1653 0x675 task2_5_debug1
 ```
 ## Я обов'язково допишу readme
 ```
