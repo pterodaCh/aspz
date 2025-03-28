@@ -42,3 +42,4 @@ suppressed: 4,096 bytes in 1 blocks
 root@:/home/ptero/ASPZ/practice4/aspz/practice_4 #
 
 ```
+За допомогою інструменту valgrind було виявлено втрату 20 байтів пам'яті
