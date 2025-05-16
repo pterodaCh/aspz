@@ -119,7 +119,38 @@ ulimit -f 1
 ulimit -t 1
 ```
 ![image](https://github.com/user-attachments/assets/a9d84628-faa6-4147-a71b-b94b54a6a9b0)
+## Завдання 5
 
+Напишіть програму для копіювання одного іменованого файлу в інший. Імена файлів передаються у вигляді аргументів.
+Програма має:
+перевіряти, чи передано два аргументи, інакше виводити "Program need two arguments";
+перевіряти доступність першого файлу для читання, інакше виводити "Cannot open file .... for reading";
+перевіряти доступність другого файлу для запису, інакше виводити "Cannot open file .... for writing";
+обробляти ситуацію перевищення обмеження на розмір файлу.
+##
+
+Запишемо у файл
+![image](https://github.com/user-attachments/assets/61156869-6a2e-4f2b-9ba4-cce7ca3caf4f)
+
+Проведемо компіляцію та запустимо програму
+![image](https://github.com/user-attachments/assets/36453d15-f39c-4e0c-89ed-6c95b2f6d31f)
+
+Перевіримо файл
+![image](https://github.com/user-attachments/assets/a7bdfbc7-819d-4dde-9a06-3b25c1f9c43f)
+
+
+## Завдання 6
+
+Напишіть програму, що демонструє використання обмеження (max stack segment size). Підказка: рекурсивна програма активно використовує стек.
+##
+Порівняння результатів без обмеження та з обмеженням відповідно
+![image](https://github.com/user-attachments/assets/43dbca30-fb1c-4bf5-a2c6-350cd0b43f78)
+
+![image](https://github.com/user-attachments/assets/93ed745e-52fc-4e61-a97b-c22dddff6726)
+
+```
+ulimit -s 120
+```
 
 ## Завдання 7
 
@@ -138,7 +169,7 @@ root@de97b76fb94a:/# ./server
 ```
 ![image](https://github.com/user-attachments/assets/335d5c0e-a669-4d9a-85f0-8972142424ff)
 
-Насправді ліміти можна змінити!Для цього потрібно змінити конфіг лімітів.
+Насправді ліміти можна змінити! Для цього потрібно дещо поритися у конфізі лімітів.
 ```
 cd etc/security
 nano limits.conf
