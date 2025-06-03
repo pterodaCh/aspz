@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <time.h>
+
+#define FILE_PATH "secret.txt"
+
+
+#define START_HOUR 9
+#define END_HOUR 17
+
+int is_access_allowed() {
+    time_t rawtime;
+    struct tm * timeinfo;
+
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+
+    int hour = timeinfo->tm_hour;
+    return hour >= START_HOUR && hour < END_HOUR;
+}
+
+int main() {
+    if (!is_access_allowed()) {
+        printf("This file is not allowed at this hour\n");
+        return 1;
+    }
+
+    FILE *fp = fopen(FILE_PATH, "r");
+    if (fp == NULL) {
+        perror("cannot open the file");
+        return 1;
+    }
+
+    printf("Allowed time to open the file:\n");
+
+    char ch;
+    while ((ch = fgetc(fp)) != EOF) {
+        putchar(ch);
+    }
+
+    fclose(fp);
+    return 0;
+}
