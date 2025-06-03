@@ -1,0 +1,12 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    printf("Who is executing the program?\n");
+    system("whoami");
+
+    printf("\n details\n");
+    system("id");
+
+    return 0;
+}
