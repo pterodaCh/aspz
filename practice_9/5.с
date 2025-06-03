@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <pwd.h>
+#include <errno.h>
+
+void check_access(const char *path) {
+    printf("\nAccess check for user UID=%d:\n", getuid());
+
+    if (access(path, R_OK) == 0) {
+        printf("  - Read access: ALLOWED.\n");
+    } else {
+        perror("  - Read access: DENIED");
+    }
+
+    if (access(path, W_OK) == 0) {
+        printf("  - Write access: ALLOWED.\n");
+    } else {
+        perror("  - Write access: DENIED");
+    }
+}
+
+int main() {
+    char filename[] = "/tmp/tmpfileXXXXXX";
+    int fd = mkstemp(filename);
+
+    if (fd == -1) {
+        perror("Error creating temporary file");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("File created: %s\n", filename);
+
+    write(fd, "Test data\n", 10);
+    close(fd);
+
+    check_access(filename);
+
+    if (geteuid() == 0) {
+        struct passwd *pwd = getpwnam("nobody");
+        if (pwd == NULL) {
+            perror("Failed to find user 'nobody'");
+            unlink(filename);
+            exit(EXIT_FAILURE);
+        }
+
+        if (chown(filename, pwd->pw_uid, pwd->pw_gid) != 0) {
+            perror("chown error");
+        } else {
+            printf("File ownership changed to 'nobody'.\n");
+        }
+
+        if (chmod(filename, 0640) != 0) {
+            perror("chmod error");
+        } else {
+            printf("File permissions changed to 0640.\n");
+        }
+
+        check_access(filename);
+    } else {
+        printf("Not running as root — skipping chown and chmod.\n");
+    }
+
+    unlink(filename);
+    printf("File deleted.\n");
+
+    return 0;
+}
+
+
+
