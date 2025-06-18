@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+int has_extension(const char *filename) {
+    const char *dot = strrchr(filename, '.');
+    return dot != NULL;
+}
+
+int is_executable(const char *filename) {
+    return access(filename, X_OK) == 0;
+}
+
+void ask_and_set_permission(const char *filename) {
+    char answer[10];
+    printf("give perm \"%s\"? [y/n]: ", filename);
+    if (fgets(answer, sizeof(answer), stdin)) {
+        if (strncmp(answer, "y", 3) == 0 || strncmp(answer, "y", 1) == 0 || strncmp(answer, "y", 2) == 0) {
+            struct stat st;
+            if (stat(filename, &st) == 0) {
+                mode_t new_mode = st.st_mode | S_IROTH; 
+
+            } else {
+                perror("Error");
+            }
+        } else {
+            printf(" perm not modified %s\n", filename);
+        }
+    }
+}
+
+int main() {
+    DIR *dir;
+    struct dirent *entry;
+
+    dir = opendir(".");
+    if (!dir) {
+        perror("no dir entered");
+        return 1;
+    }
+
+    int found = 0;
+    while ((entry = readdir(dir)) != NULL) {
+        if (entry->d_type == DT_REG && !has_extension(entry->d_name) && is_executable(entry->d_name)) {
+            found = 1;
+            printf("file: %s\n", entry->d_name);
+            ask_and_set_permission(entry->d_name);
+        }
+    }
+
+    if (!found) {
+        printf("no c executable files.\n");
+    }
+
+    closedir(dir);
+    return 0;
+}
+
