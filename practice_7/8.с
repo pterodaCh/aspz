@@ -1,0 +1,58 @@
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+void ask_and_delete(const char *filename) {
+    char answer[10];
+    printf("Delete file \"%s\"? [y/n]: ", filename);
+
+    if (fgets(answer, sizeof(answer), stdin)) {
+        // Check if user said yes
+        if (strncmp(answer, "yes", 3) == 0 || strncmp(answer, "y", 1) == 0) {
+            if (remove(filename) == 0) {
+                printf(" File\"%s\" deleted.\n", filename);
+            } else {
+                perror(" Error deleting the file");
+            }
+        } else {
+            printf(" %s not deleted\n", filename);
+        }
+    }
+}
+
+int main() {
+    DIR *dir;
+    struct dirent *entry;
+
+    dir = opendir(".");
+    if (!dir) {
+        perror("Cannot open current directory");
+        return 1;
+    }
+
+    int found = 0;
+
+
+    while ((entry = readdir(dir)) != NULL) {
+        struct stat file_stat;
+        if (stat(entry->d_name, &file_stat) == 0 && S_ISREG(file_stat.st_mode)) {
+
+            if (strcmp(entry->d_name, "delete_files") == 0) continue;
+
+            found = 1;
+            ask_and_delete(entry->d_name);
+        }
+    }
+
+    if (!found) {
+        printf("No regular files found in current directory.\n");
+    }
+
+    closedir(dir);
+    return 0;
+}
