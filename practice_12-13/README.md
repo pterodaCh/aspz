@@ -29,4 +29,4 @@ sqlite3 crash_monitor.db "SELECT * FROM crashes;"
 ```
 ![image](https://github.com/user-attachments/assets/6f168971-597d-4aa5-9172-057726bfea11)
 
-Таким чинос
+До речі, маскот BSD -  веселий на вигляд демон у кросівках і з вилами!
